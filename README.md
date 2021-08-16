@@ -17,4 +17,5 @@
 - `==` `>=` `<=` `!=` `>` `<` 这些比较运算符左右均有一个空格
 - `<<` `>>` 左右各一个空格
 -  `||` `&&` 左右各一个空格
-# [$\color{white}\colorbox{#3498db}{\large{\texttt{演示视频}}}$](https://www.bilibili.com/video/BV1kA411w7Sg)
+
+# [演示视频](https://www.bilibili.com/video/BV1kA411w7Sg)
