@@ -11,38 +11,33 @@
 
 using namespace std;
 
-short parenthesis;		//小括号
-short keyword;			// 2:if  3:for  4:else  5:while  6:switch
-short brace; 			//大括号
-bool inDefinition;
+short parenthesis;				//小括号
+short keyword;					// 2:if  3:for  4:else  5:while  6:switch
+short brace; 					//大括号
+bool inDefinition;				//是否在#define 后面
 bool inDoubleQuotationMarks;    //双引号
 bool inSingleQuotationMarks;    //单引号
-bool inIncluding;
-bool inSingleLineComments;
-int inMultiLineComments;
-bool afterKeyword = false;
-bool lastLineKeyword = false;
-bool strictIndent = false;
+bool inIncluding;				//是否在#include 后面
+bool inSingleLineComments;		//是否在单行注释后面
+int inMultiLineComments;		//是否在多行注释内
+bool afterKeyword = false;		//是否在关键字后面或
+bool lastLineKeyword = false;	//上一行是否有关键字
 
 int lineI;
 
-bool avoidTwoConsecutiveBlankLines = true;
-bool spacesOnBothSidesOfSelfOperators = true;
+bool avoidTwoConsecutiveBlankLines = true;		//避免两个连续的空行
+bool spacesOnBothSidesOfSelfOperators = true;	//+=,-=,*=,/=,%= 两侧是否有空格
 bool spacesOnBothSidesOfArithmeticOperators = true;
 bool spacesOnBothSidesOfAssignmentOperators = true;
 bool spaceAfterSemicolon = true;
 bool spaceAfterComma = true;
 bool spaceAfterKeyword = true;
-int atMostOneSentenceOnALine = 2;	//0:允许一行多个语句 1:仅允许关键字后同行一个语句 2:仅允许一行一个语句,关键字括号内算一个语句
-bool theFirstBracesNeverWrap = false;
+int atMostOneSentenceOnALine = 2;		//0:允许一行多个语句 1:仅允许关键字后同行一个语句 2:仅允许一行一个语句,关键字括号内算一个语句
+bool theFirstBracesNeverWrap = false;	//关键字后的'{'不换行
 bool overwriteOriginalFile = false;
+bool strictIndent = false;				//是否使用严格的缩进
 
 vector<string> codeResult;
-
-int getRand(int mini,int maxi)
-{
-	return rand() % (maxi - mini + 1) + mini;
-}
 
 void color(int a)
 {
@@ -54,14 +49,14 @@ bool inComments()
     return (inSingleLineComments || inMultiLineComments);
 }
 
-string clearTheSpaceAtTheFront(string s)
+string clearTheSpaceAtTheFront(string s)	//清除字符串前部的空格和Tab
 {
     while(s[0] == ' ' || s[0] == 9)
         s.erase(0,1);
     return s;
 }
 
-char getTheNthCharacterOf(string s, int n)
+char getTheNthCharacterOf(string s, int n)	//获取字符串的第N个非空字符
 {
     int i = 0;
     while(i < s.length())
@@ -78,7 +73,7 @@ char getTheNthCharacterOf(string s, int n)
     return ' ';
 }
 
-char getTheNthCharacterAfter(string s, int pos, int n)
+char getTheNthCharacterAfter(string s, int pos, int n)	//获取s[pos]后的第N个非空字符
 {
     int i = pos;
     if(n > 0)
@@ -122,7 +117,7 @@ bool isLetterOrNumber(char c) //c ( is letter, number, _, (, ), ', or " ) : retu
             c == '_' || c == '\'' || c == '\"' || c == '('|| c == ')');
 }
 
-void go(float x,float y)
+void go(float x,float y)	//光标移动函数
 {
 	COORD coord;
 	coord.X = x * 2;
@@ -232,7 +227,7 @@ int main(int argc, char* argv[])
 
     readSettings();
 
-    if(argc > 1)
+    if(argc > 1)	//如果有文件被使用该程序打开
     {
     	SetConsoleTitle("码风自动改善工具");
     	for(int i = 1; i < argc; i++)
@@ -299,7 +294,7 @@ int main(int argc, char* argv[])
 
             go(0,i-2);
             printf("Progress: Line");
-            for(int k = 0; k < codeResult.size(); k++)
+            for(int k = 0; k < codeResult.size(); k++)	//逐行处理
             {
                 if(getTheNthCharacterOf(codeResult[k],1) == '#')
                 {
@@ -338,7 +333,7 @@ int main(int argc, char* argv[])
 
                 if(!inIncluding)
                 {
-                	for(int l = 0; k < codeResult.size() && l < codeResult[k].length(); l++)
+                	for(int l = 0; k < codeResult.size() && l < codeResult[k].length(); l++)	//逐字符处理
                     {
                         if(!inComments() && !inDoubleQuotationMarks && (l == 0 || codeResult[k][l-1] == ' ' || codeResult[k][l-1] == 9))
                         {
@@ -848,9 +843,11 @@ int main(int argc, char* argv[])
 					theFirstBracesNeverWrap = 1 - theFirstBracesNeverWrap,
 					cout << OnOff[theFirstBracesNeverWrap];
 				else if(p == 10)
+				{
 					if(strictIndent || MessageBox(NULL,"此选项下所有被判定为多余的缩进会被删除，这可能导致某些注释处或其它地方不再对齐，是否继续？","风险提示",MB_YESNO) == 6)
 						strictIndent = 1 - strictIndent,
 						cout << OnOff[strictIndent];
+				}
 				else if(p == 11)
 					if(overwriteOriginalFile || MessageBox(NULL,"此选项下文件被处理后将无法还原，是否继续？","风险提示",MB_YESNO) == 6)
 						overwriteOriginalFile = 1 - overwriteOriginalFile,
